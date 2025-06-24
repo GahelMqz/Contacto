@@ -18,17 +18,33 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 })
 
-// Ruta para guardar contacto
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
+
 app.post('/api/contacto', async (req, res) => {
-  const { fullName, email, phone, msg } = req.body
+  const { fullName, email, phone, msg, captcha } = req.body
+
+  if (!captcha) {
+    return res.status(400).json({ error: 'Captcha no proporcionado' })
+  }
+
+  // Verifica el captcha con Google
+  const secret = process.env.RECAPTCHA_SECRET_KEY
+  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captcha}`
 
   try {
+    const response = await fetch(verifyUrl, { method: 'POST' })
+    const data = await response.json()
+
+    if (!data.success) {
+      return res.status(400).json({ error: 'Captcha inválido' })
+    }
+
+    // CAPTCHA válido, guarda en BD
     const sql = `
       INSERT INTO contactos (fullName, email, phone, msg)
       VALUES (?, ?, ?, ?)
     `
-    const [result] = await pool.execute(sql, [fullName, email, phone, msg])
-
+    await pool.execute(sql, [fullName, email, phone, msg])
     res.status(200).json({ message: 'Mensaje guardado correctamente' })
   } catch (error) {
     console.error('❌ Error al guardar contacto:', error)

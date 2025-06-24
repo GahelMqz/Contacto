@@ -89,6 +89,8 @@
           </label>
         </div>
 
+        <div id="captcha-container"></div>
+
         <button
           type="submit"
           class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full"
@@ -105,7 +107,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 
 interface Fish {
   id: number
@@ -145,9 +147,30 @@ const form = reactive({
   acceptPrivacy: false, // 👈 nuevo campo
 })
 
+let recaptchaWidgetId = null
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    if (window.grecaptcha) {
+      clearInterval(interval)
+      window.grecaptcha.ready(() => {
+        recaptchaWidgetId = window.grecaptcha.render('captcha-container', {
+          sitekey: '6LcLfWwrAAAAAO-0m8gn9qvC2pNAXkGPgXKvkGMz',
+        })
+      })
+    }
+  }, 300)
+})
+
 function submitForm() {
   if (!form.acceptPrivacy) {
-    alert('Debes aceptar los Avisos de privacidad antes de enviar el formulario.')
+    alert('Debes aceptar los Avisos de privacidad.')
+    return
+  }
+
+  const token = window.grecaptcha.getResponse(recaptchaWidgetId)
+  if (!token) {
+    alert('Completa el captcha.')
     return
   }
 
@@ -159,18 +182,20 @@ function submitForm() {
       email: form.email,
       phone: form.phone,
       msg: form.msg,
+      captcha: token,
     }),
   })
     .then(() => {
-      alert('¡Mensaje enviado con éxito!')
+      alert('¡Mensaje enviado!')
       form.fullName = ''
       form.email = ''
       form.phone = ''
       form.msg = ''
       form.acceptPrivacy = false
+      window.grecaptcha.reset(recaptchaWidgetId)
     })
     .catch((err) => {
-      alert('Error al enviar el mensaje')
+      alert('Error al enviar')
       console.error(err)
     })
 }
