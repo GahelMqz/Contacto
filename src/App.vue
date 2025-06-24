@@ -81,7 +81,11 @@
           />
           <label for="privacy" class="text-sm text-gray-700">
             Acepto los
-            <a href="#" class="text-blue-600 underline hover:text-blue-800">Avisos de privacidad</a>
+            <a
+              href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fidaip.org.mx%2Farchivos%2Fpdp%2FFormato_Aviso_de_Privacidad_Simplificado_2022.docx&wdOrigin=BROWSELINK"
+              class="text-blue-600 underline hover:text-blue-800"
+              >Avisos de privacidad</a
+            >
           </label>
         </div>
 
@@ -116,21 +120,20 @@ const fishList: Fish[] = [
     name: 'Betta Splendens',
     description: 'Colorido y territorial. Requiere cuidados individuales.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Bettasplendens2.jpg/320px-Bettasplendens2.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Betta04.jpg/1200px-Betta04.jpg',
   },
   {
     id: 2,
     name: 'Neón Tetra',
     description: 'Pacífico, ideal para acuarios comunitarios. Muy llamativo.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paracheirodon_innesi_(aka).jpg/320px-Paracheirodon_innesi_(aka).jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/5/54/Neonka_obecna_paracheirodon_innesi.jpg',
   },
   {
     id: 3,
     name: 'Guppy',
     description: 'Resistente y fácil de cuidar. Muy recomendado para principiantes.',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Poecilia_reticulata_male.jpg/320px-Poecilia_reticulata_male.jpg',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Guppy_10-18-2006_10-57-10_AM.jpg',
   },
 ]
 
