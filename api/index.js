@@ -2,6 +2,11 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const mysql = require('mysql2/promise')
+const Joi = require('joi')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const verifyToken = require('../api/middleware/verifyToken')
+const router = express.Router()
 
 const app = express()
 const port = 3001
@@ -18,20 +23,38 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 })
 
+const contactoSchema = Joi.object({
+  fullName: Joi.string().min(3).max(100).trim().required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string()
+    .pattern(/^[0-9+\s()-]{7,20}$/)
+    .required(),
+  msg: Joi.string().min(5).max(1000).trim().required(),
+  captcha: Joi.string().required(),
+})
+
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 app.post('/api/contacto', async (req, res) => {
-  const { fullName, email, phone, msg, captcha } = req.body
-
-  if (!captcha) {
-    return res.status(400).json({ error: 'Captcha no proporcionado' })
+  // Validación con Joi
+  const { error, value } = contactoSchema.validate(req.body, { abortEarly: false })
+  if (error) {
+    return res.status(400).json({
+      error: 'Datos inválidos',
+      details: error.details.map((d) => d.message),
+    })
   }
 
-  // Verifica el captcha con Google
+  const { fullName, email, phone, msg, captcha } = value
+
+  // Verificación del CAPTCHA
   const secret = process.env.RECAPTCHA_SECRET_KEY
   const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captcha}`
 
   try {
+    // ⚠️ IMPORTANTE: Si usas Node < 18, necesitas importar fetch (o usa axios)
+    const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
+
     const response = await fetch(verifyUrl, { method: 'POST' })
     const data = await response.json()
 
@@ -49,6 +72,120 @@ app.post('/api/contacto', async (req, res) => {
   } catch (error) {
     console.error('❌ Error al guardar contacto:', error)
     res.status(500).json({ error: 'Error del servidor' })
+  }
+})
+
+app.post('/api/register', async (req, res) => {
+  const { fullName, email, pass } = req.body
+  try {
+    const [existingUsers] = await pool.execute('SELECT id_user FROM users WHERE email = ?', [email])
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ error: 'El correo ya está registrado' })
+    }
+
+    const hashedPassword = await bcrypt.hash(pass, 10)
+
+    const sql = `
+      INSERT INTO users (fullName, email, pass)
+      VALUES (?, ?, ?)
+    `
+    await pool.execute(sql, [fullName, email, hashedPassword])
+    res.status(200).json({ message: 'Usuario creado correctamente' })
+  } catch (error) {
+    console.error('❌ Error al crear usuario:', error)
+    res.status(500).json({ error: 'Error del servidor' })
+  }
+})
+
+app.post('/api/login', async (req, res) => {
+  const { email, pass } = req.body
+
+  try {
+    const [rows] = await pool.execute(
+      'SELECT id_user, fullName, email, pass, id_rol_id FROM users WHERE email = ?',
+      [email],
+    )
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'Correo o contraseña incorrectos' })
+    }
+
+    const user = rows[0]
+    const match = await bcrypt.compare(pass, user.pass)
+
+    if (!match) {
+      return res.status(401).json({ error: 'Correo o contraseña incorrectos' })
+    }
+
+    // 🔐 Crear el token
+    const token = jwt.sign(
+      {
+        id_user: user.id_user,
+        fullName: user.fullName,
+        email: user.email,
+        id_rol_id: user.id_rol_id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' },
+    )
+
+    res.status(200).json({ token })
+  } catch (error) {
+    console.error('❌ Error en login:', error)
+    res.status(500).json({ error: 'Error del servidor' })
+  }
+})
+
+// app.post('/api/login', async (req, res) => {
+//   const { email, pass } = req.body
+
+//   try {
+//     // 1. Buscar el usuario por correo
+//     const [rows] = await pool.execute(
+//       'SELECT id_user, fullName, email, pass FROM users WHERE email = ?',
+//       [email],
+//     )
+
+//     if (rows.length === 0) {
+//       return res.status(401).json({ error: 'Correo o contraseña incorrectos' })
+//     }
+
+//     const user = rows[0]
+
+//     // 2. Comparar la contraseña ingresada con la almacenada (hasheada)
+//     const match = await bcrypt.compare(pass, user.pass)
+
+//     if (!match) {
+//       return res.status(401).json({ error: 'Correo o contraseña incorrectos' })
+//     }
+
+//     // 3. Login exitoso
+//     res.status(200).json({
+//       message: 'Inicio de sesión exitoso',
+//       user: {
+//         id_user: user.id_user,
+//         fullName: user.fullName,
+//         email: user.email,
+//         // Aquí podrías devolver un token si usaras JWT
+//       },
+//     })
+//   } catch (error) {
+//     console.error('❌ Error en login:', error)
+//     res.status(500).json({ error: 'Error del servidor' })
+//   }
+// })
+
+// Obtener todos los usuarios (requiere autenticación)
+app.get('/api/leads', async (req, res) => {
+  try {
+    const [leads] = await pool.query(`
+      select * from contactos order by create_at desc
+    `)
+    res.json(leads)
+  } catch (error) {
+    console.error('Error al obtener leads:', error)
+    res.status(500).json({ mensaje: 'Error al obtener leads' })
   }
 })
 
