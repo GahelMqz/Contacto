@@ -121,7 +121,7 @@
         <button
           :disabled="isSubmitting"
           type="submit"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="isSubmitting" class="flex items-center justify-center">
             <svg

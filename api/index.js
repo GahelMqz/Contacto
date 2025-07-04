@@ -178,9 +178,97 @@ app.post('/api/login', async (req, res) => {
 
 // Obtener todos los usuarios (requiere autenticación)
 app.get('/api/leads', async (req, res) => {
+  const page = parseInt(req.query.page) || 1 // Página actual, por defecto 1
+  const limit = parseInt(req.query.limit) || 10 // Límites por página, por defecto 10
+  const offset = (page - 1) * limit
+
+  try {
+    const [leads] = await pool.query(
+      `
+      SELECT * FROM contactos
+      ORDER BY create_at DESC
+      LIMIT ? OFFSET ?
+    `,
+      [limit, offset],
+    )
+
+    // Obtener total de registros
+    const [[{ total }]] = await pool.query(`SELECT COUNT(*) AS total FROM contactos`)
+
+    res.json({
+      data: leads,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    })
+  } catch (error) {
+    console.error('❌ Error al obtener leads:', error)
+    res.status(500).json({ mensaje: 'Error al obtener leads' })
+  }
+})
+
+// app.get('/api/leads', async (req, res) => {
+//   try {
+//     const [leads] = await pool.query(`
+//       select * from contactos order by create_at desc
+//     `)
+//     res.json(leads)
+//   } catch (error) {
+//     console.error('Error al obtener leads:', error)
+//     res.status(500).json({ mensaje: 'Error al obtener leads' })
+//   }
+// })
+
+// Obtener un lead por ID
+app.get('/api/leads/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const [lead] = await pool.query('SELECT * FROM contactos WHERE id = ?', [id])
+
+    if (lead.length === 0) {
+      return res.status(404).json({ mensaje: 'Lead no encontrado' })
+    }
+
+    res.json(lead[0])
+  } catch (error) {
+    console.error('Error al obtener lead:', error)
+    res.status(500).json({ mensaje: 'Error del servidor' })
+  }
+})
+
+app.put('/api/leads/:id/state', async (req, res) => {
+  const { id } = req.params
+  const { id_state_id } = req.body
+
+  if (!id_state_id) {
+    return res.status(400).json({ mensaje: 'El campo id_state_id es obligatorio.' })
+  }
+
+  try {
+    const [result] = await pool.query('UPDATE contactos SET id_state_id = ? WHERE id = ?', [
+      id_state_id,
+      id,
+    ])
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ mensaje: 'Lead no encontrado.' })
+    }
+
+    res.json({ mensaje: 'Estado actualizado correctamente.' })
+  } catch (error) {
+    console.error('Error al actualizar el estado:', error)
+    res.status(500).json({ mensaje: 'Error interno del servidor.' })
+  }
+})
+
+app.get('/api/states', async (req, res) => {
   try {
     const [leads] = await pool.query(`
-      select * from contactos order by create_at desc
+      select * from states
     `)
     res.json(leads)
   } catch (error) {

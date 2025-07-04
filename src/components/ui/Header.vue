@@ -11,7 +11,7 @@
         <button
           v-if="!isLoggedIn"
           @click="$router.push('/login')"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
         >
           Iniciar sesión
         </button>
@@ -19,7 +19,7 @@
         <button
           v-else
           @click="logout"
-          class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition"
+          class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition"
         >
           Cerrar sesión
         </button>

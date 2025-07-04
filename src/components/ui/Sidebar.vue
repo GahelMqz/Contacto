@@ -27,9 +27,9 @@
             <li>
               <router-link
                 to="/dashboard"
-                class="block font-medium px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
+                class="block font-medium px-4 py-2 rounded hover:bg-blue-600 transition-all"
               >
-                Leads
+                Lista de leads
               </router-link>
             </li>
           </h5>
@@ -40,21 +40,21 @@
       <router-link to="/">
         <button
           type="button"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition w-full mb-2"
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full mb-2"
           @click="isOpen = false"
         >
           Inicio
         </button>
       </router-link>
       <button
-        class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition w-full mb-2"
+        class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition w-full mb-2"
         @click="logout"
       >
         Cerrar sesión
       </button>
       <button
         type="submit"
-        class="bg-slate-500 text-white px-6 py-2 rounded-lg hover:bg-slate-600 transition w-full lg:hidden"
+        class="bg-slate-500 text-white px-6 py-2 rounded hover:bg-slate-600 transition w-full lg:hidden"
         @click="isOpen = false"
       >
         Ocultar
