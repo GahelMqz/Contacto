@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import DashboardLayout from '@/components/layout/DashboardLayout.vue'
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode, type JwtPayload } from 'jwt-decode'
+
+interface MyJwtPayload extends JwtPayload {
+  id_rol_id?: number
+}
 
 const routes = [
   {
@@ -51,10 +55,10 @@ router.beforeEach((to, from, next) => {
     }
 
     try {
-      const decoded = jwtDecode(token)
+      const decoded = jwtDecode<MyJwtPayload>(token)
 
       const now = Date.now() / 1000
-      if (decoded.exp < now) {
+      if (typeof decoded.exp === 'undefined' || decoded.exp < now) {
         localStorage.removeItem('token')
         return next('/')
       }

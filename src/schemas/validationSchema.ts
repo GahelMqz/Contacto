@@ -39,7 +39,7 @@ export const validationContactForm = yup.object({
     .string()
     .required('Campo requerido')
     .matches(
-      /^[\+]?[(]?[0-9]{2,4}[)]?[-\s\.]?[0-9]{3,4}[-\s\.]?[0-9]{4,6}$/,
+      /^[\+]?[(]?[0-9]{2,4}[)]?[-\s\.]?[0-9]{3,4}[-\s\.]?[0-9]{5,6}$/,
       'Número telefónico inválido',
     ),
 

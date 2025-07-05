@@ -24,12 +24,12 @@ const pool = mysql.createPool({
 })
 
 const contactoSchema = Joi.object({
-  fullName: Joi.string().min(3).max(100).trim().required(),
-  email: Joi.string().email().required(),
-  phone: Joi.string()
-    .pattern(/^[0-9+\s()-]{7,20}$/)
-    .required(),
-  msg: Joi.string().min(5).max(1000).trim().required(),
+  // fullName: Joi.string().min(3).max(100).trim().required(),
+  // email: Joi.string().email().required(),
+  // phone: Joi.string()
+  //   .pattern(/^[0-9+\s()-]{7,20}$/)
+  //   .required(),
+  // msg: Joi.string().min(5).max(1000).trim().required(),
   captcha: Joi.string().required(),
 })
 

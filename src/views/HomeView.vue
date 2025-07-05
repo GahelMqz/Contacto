@@ -229,12 +229,12 @@ onMounted(() => {
     }
   }, 300)
 
-  const input = document.querySelector('#phone')
-  iti.value = intlTelInput(input, {
-    loadUtils: () => import('../../node_modules/intl-tel-input/build/js/utils.js'),
-    initialCountry: 'MX',
-    containerClass: 'w-full text-[#565656]',
-  })
+  // const input = document.querySelector('#phone')
+  // iti.value = intlTelInput(input, {
+  //   loadUtils: () => import('../../node_modules/intl-tel-input/build/js/utils.js'),
+  //   initialCountry: 'MX',
+  //   containerClass: 'w-full text-[#565656]',
+  // })
 })
 
 function submitForm() {
