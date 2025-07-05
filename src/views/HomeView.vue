@@ -164,6 +164,7 @@ import { Form, Field } from 'vee-validate'
 import 'intl-tel-input/build/css/intlTelInput.css'
 import intlTelInput from 'intl-tel-input'
 import { reactive, onMounted, ref } from 'vue'
+import emailjs from 'emailjs-com'
 
 const isSubmitting = ref(false)
 const iti = ref({})
@@ -261,6 +262,22 @@ function submitForm() {
       captcha: token,
     }),
   })
+    .then(() => {
+      // Enviar correo al admin vía EmailJS
+      return emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+
+        {
+          fullName: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          msg: form.msg,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      )
+    })
+
     .then(() => {
       alert('¡Mensaje enviado!')
       form.fullName = ''

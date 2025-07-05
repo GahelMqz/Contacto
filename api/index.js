@@ -68,6 +68,7 @@ app.post('/api/contacto', async (req, res) => {
       VALUES (?, ?, ?, ?)
     `
     await pool.execute(sql, [fullName, email, phone, msg])
+
     res.status(200).json({ message: 'Mensaje guardado correctamente' })
   } catch (error) {
     console.error('❌ Error al guardar contacto:', error)
