@@ -27,7 +27,7 @@ export const validationRoles = yup.object({
 })
 
 export const validationContactForm = yup.object({
-  fullName: yup.string().required('Campo requerido'),
+  fullName: yup.string().required('Campo requerido').min(3, 'Se requieren al menos 3 caracteres'),
   email: yup
     .string()
     .required('Campo requerido')
@@ -43,7 +43,10 @@ export const validationContactForm = yup.object({
       'Número telefónico inválido',
     ),
 
-  msg: yup.string().required('No olvides escribir tu mensaje'),
+  msg: yup
+    .string()
+    .required('No olvides escribir tu mensaje')
+    .min(5, 'Se requieren al menos 5 caracteres'),
 })
 
 export const validationUserRegister = yup.object({
