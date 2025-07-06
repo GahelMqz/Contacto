@@ -25,8 +25,8 @@ const routes = [
     component: () => import('@/views/auth/LoginView.vue'),
   },
   {
-    path: '/dashboard',
-    component: () => DashboardLayout,
+    path: '/',
+    component: () => import('@/components/layout/DashboardLayout.vue'),
     children: [
       {
         path: '/dashboard',
