@@ -104,8 +104,7 @@ import { validationUserRegister } from '@/schemas/validationSchema.ts'
 import { Form, Field } from 'vee-validate'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
-const API_URL = import.meta.env.VITE_API_URL
+import { API_URL } from '@/config/apiURL'
 
 const router = useRouter()
 const isSubmitting = ref(false)
