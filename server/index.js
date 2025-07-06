@@ -285,5 +285,5 @@ app.get('/api/states', async (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`✅ API escuchando en http://localhost:${port}`)
+  console.log(`✅ API escuchando en: ${port}`)
 })
