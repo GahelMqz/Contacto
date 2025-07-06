@@ -10,7 +10,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "start": "serve dist"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.10",
