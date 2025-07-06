@@ -29,7 +29,7 @@ const routes = [
     component: () => DashboardLayout,
     children: [
       {
-        path: '/',
+        path: '/dashboard',
         component: () => import('@/views/admin/DashboardView.vue'),
         meta: { requiresAuth: true, adminOnly: true },
       },
