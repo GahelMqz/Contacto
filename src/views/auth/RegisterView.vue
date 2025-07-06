@@ -105,6 +105,8 @@ import { Form, Field } from 'vee-validate'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 const router = useRouter()
 const isSubmitting = ref(false)
 
@@ -117,7 +119,7 @@ const form = reactive({
 function submitForm() {
   isSubmitting.value = true
 
-  fetch('http://localhost:3001/api/register', {
+  fetch(`${API_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
