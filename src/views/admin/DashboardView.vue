@@ -158,6 +158,7 @@
 import { ref, onMounted } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
+import { API_URL } from '@/config/apiURL'
 
 // Estado reactivo para el modal y datos
 const isModalOpen = ref(false)
@@ -235,9 +236,7 @@ async function fetchWithErrorHandling(url, options = {}) {
 async function fetchLeads(page = 1) {
   isLoading.value = true
   try {
-    const json = await fetchWithErrorHandling(
-      `http://localhost:3001/api/leads?page=${page}&limit=5`,
-    )
+    const json = await fetchWithErrorHandling(`${API_URL}/api/leads?page=${page}&limit=5`)
     leads.value = json.data
     pagination.value = json.pagination
   } catch (err) {
@@ -251,7 +250,7 @@ async function fetchLeads(page = 1) {
 // Cargar estados desde la API
 async function fetchStates() {
   try {
-    const data = await fetchWithErrorHandling(`http://localhost:3001/api/states`)
+    const data = await fetchWithErrorHandling(`${API_URL}/api/states`)
     states.value = data
   } catch (error) {
     console.error('Error al obtener estados:', error)
@@ -263,7 +262,7 @@ async function fetchStates() {
 const verDetalles = async (id) => {
   isLoading.value = true
   try {
-    const data = await fetchWithErrorHandling(`http://localhost:3001/api/leads/${id}`)
+    const data = await fetchWithErrorHandling(`${API_URL}/api/leads/${id}`)
     detalle.value = data
     initialStateId.value = data.id_state_id
     isModalOpen.value = true
@@ -284,13 +283,10 @@ async function actualizarEstado() {
 
   isLoading.value = true
   try {
-    const res = await fetchWithErrorHandling(
-      `http://localhost:3001/api/leads/${detalle.value.id}/state`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({ id_state_id: detalle.value.id_state_id }),
-      },
-    )
+    const res = await fetchWithErrorHandling(`${API_URL}/api/leads/${detalle.value.id}/state`, {
+      method: 'PUT',
+      body: JSON.stringify({ id_state_id: detalle.value.id_state_id }),
+    })
 
     // Actualizar la lista de leads para reflejar el cambio
     const updatedLead = leads.value.find((lead) => lead.id === detalle.value.id)

@@ -84,6 +84,7 @@
 
 <script setup lang="ts">
 import ValidationMsg from '@/components/auth/ValidationMsg.vue'
+import { API_URL } from '@/config/apiURL'
 import { validationUserLogin } from '@/schemas/validationSchema.ts'
 import { jwtDecode } from 'jwt-decode'
 import { Form, Field } from 'vee-validate'
@@ -106,7 +107,7 @@ type DecodedToken = {
 function submitForm() {
   isSubmitting.value = true
 
-  fetch('http://localhost:3001/api/login', {
+  fetch(`${API_URL}/api/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

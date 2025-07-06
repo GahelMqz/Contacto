@@ -165,6 +165,7 @@ import 'intl-tel-input/build/css/intlTelInput.css'
 import intlTelInput from 'intl-tel-input'
 import { reactive, onMounted, ref } from 'vue'
 import emailjs from 'emailjs-com'
+import { API_URL } from '@/config/apiURL'
 
 const isSubmitting = ref(false)
 const iti = ref({})
@@ -251,7 +252,7 @@ function submitForm() {
 
   isSubmitting.value = true
 
-  fetch('http://localhost:3001/api/contacto', {
+  fetch(`${API_URL}/api/contacto`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
