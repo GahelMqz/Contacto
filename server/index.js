@@ -51,7 +51,7 @@ app.post('/api/contacto', async (req, res) => {
     })
   }
 
-  const { fullName, email, phone, msg, create_at, captcha } = value
+  const { fullName, email, phone, msg, captcha } = value
 
   // Verificación del CAPTCHA
   const secret = process.env.RECAPTCHA_SECRET_KEY
@@ -70,10 +70,10 @@ app.post('/api/contacto', async (req, res) => {
 
     // CAPTCHA válido, guarda en BD
     const sql = `
-      INSERT INTO contactos (fullName, email, phone, msg, create_at)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO contactos (fullName, email, phone, msg)
+      VALUES (?, ?, ?, ?)
     `
-    await pool.execute(sql, [fullName, email, phone, msg, create_at])
+    await pool.execute(sql, [fullName, email, phone, msg])
 
     res.status(200).json({ message: 'Mensaje guardado correctamente' })
   } catch (error) {
